@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ===================================================
+       CAMBIAR EL TÍTULO DE LA PESTAÑA DEL NAVEGADOR AQUÍ
+       =================================================== -->
+  <title>Shirley — 22 Añitos ♥</title>
+  <meta name="description" content="Una página especial de cumpleaños para Shirley" />
+
+  <!-- Fuentes de Google — NO cambiar -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet" />
+
+  <!-- CSS externo — archivo estilos.css en la misma carpeta -->
+  <link rel="stylesheet" href="estilos.css" />
+
+  <!-- GSAP para animaciones elegantes -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+</head>
+<body>
+
+<!-- =====================================================
+     CURSOR PERSONALIZADO (solo escritorio)
+     ===================================================== -->
+<div id="cursor" aria-hidden="true"></div>
+<div id="cursor-ring" aria-hidden="true"></div>
+
+<!-- =====================================================
+     CANVAS DE PARTÍCULAS FLOTANTES (fondo animado)
+     ===================================================== -->
+<canvas id="particles-canvas" aria-hidden="true"></canvas>
+
+<!-- =====================================================
+     INTRO CINEMATOGRÁFICA (pantalla de entrada)
+
+     INSTRUCCIONES:
+     — El texto grande es el "logo" de la intro
+     — Cambia "SHIRLEY" por lo que quieras mostrar al abrir
+     — El subtítulo aparece debajo del logo
+     ===================================================== -->
+<div id="intro" role="dialog" aria-label="Introducción" aria-modal="true">
+  <div id="intro-lines" aria-hidden="true"></div>
+
+  <div id="intro-logo" aria-hidden="true">
+    <!-- ===== CAMBIAR NOMBRE DEL LOGO AQUÍ ===== -->
+    <div class="logo-text" id="intro-logo-text">Feliz Cumpleaños mi amor</div>
+    <!-- ===== CAMBIAR SUBTÍTULO DEL LOGO AQUÍ ===== -->
+    <div class="logo-subtitle" id="intro-logo-sub">de parte de tu churris ♥</div>
+  </div>
+
+  <!-- Botón de saltar intro -->
+  <button id="intro-skip" aria-label="Saltar introducción">Saltar →</button>
+</div>
+
+<!-- =====================================================
+     CONTROLES DE MÚSICA
+
+     INSTRUCCIONES PARA PONER TU MÚSICA:
+     1. Sube tu archivo MP3 a la misma carpeta que index.html
+     2. Descomenta la línea <source src="..."> y pon el nombre de tu archivo
+     3. Cambia el nombre de la canción en el span .music-note
+
+     EJEMPLO: si tu archivo se llama "nuestra-cancion.mp3":
+       <source src="nuestra-cancion.mp3" type="audio/mpeg" />
+
+     RECOMENDACIONES DE CANCIONES para el cumpleaños:
+     - "Perfect" de Ed Sheeran
+     - "A Thousand Years" de Christina Perri
+     - "Tú" de Pablo Alborán
+     - "All of Me" de John Legend
+     - "Por Favor" de Rauw Alejandro
+     ===================================================== -->
+        
+<div id="music-controls" aria-label="Controles de música">
+  <button id="play-pause" aria-label="Reproducir música">
+    <svg id="icon-play" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M8 5v14l11-7z"/>
+    </svg>
+    <svg id="icon-pause" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display:none">
+      <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+    </svg>
+  </button>
+
+  <div class="eq-bars paused" aria-hidden="true">
+    <div class="eq-bar"></div>
+    <div class="eq-bar"></div>
+    <div class="eq-bar"></div>
+    <div class="eq-bar"></div>
+  </div>
+
+  <input type="range" id="volume-slider" min="0" max="1" step="0.05" value="0.4" aria-label="Volumen" />
+
+  <!-- ===== CAMBIAR NOMBRE DE LA CANCIÓN AQUÍ ===== -->
+  <span class="music-note" id="song-title">♪ Photograph</span>
+
+  <!-- =====================================================
+       MÚSICA: COLOCA TU ARCHIVO AQUÍ
+       Descomenta la línea <source> y pon tu archivo MP3
+       ===================================================== -->
+  <audio id="bg-music" loop preload="auto">
+    <source src="instrumental.mp3" type="audio/mpeg" />
+  </audio>
+</div>
+
+<!-- =====================================================
+     NAVEGACIÓN PRINCIPAL
+     ===== CAMBIAR EL NOMBRE DE LA MARCA AQUÍ =====
+     ===================================================== -->
+<header id="nav" role="banner">
+  <!-- ===== INICIALES O NOMBRE CORTO en la esquina superior izquierda ===== -->
+  <div class="nav-brand">S &hearts; 22</div>
+  <button id="menu-toggle" aria-label="Abrir menú" aria-expanded="false">
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+  </button>
+</header>
+
+<nav id="nav-panel" role="navigation" aria-label="Navegación principal">
+  <a href="#inicio"    class="nav-link" tabindex="-1">Inicio</a>
+  <a href="#historia"  class="nav-link" tabindex="-1">Nuestra Historia</a>
+  <a href="#galeria"   class="nav-link" tabindex="-1">Galería</a>
+  <a href="#recuerdos" class="nav-link" tabindex="-1">Recuerdos</a>
+  <a href="#momentos"  class="nav-link" tabindex="-1">Momentos</a>
+  <a href="#videos"    class="nav-link" tabindex="-1">Videos</a>
+  <a href="#carta"     class="nav-link" tabindex="-1">Carta</a>
+  <a href="#razones"   class="nav-link" tabindex="-1">Razones</a>
+  <a href="#sorpresa"  class="nav-link" tabindex="-1">Sorpresa Final</a>
+</nav>
+
+
+<!-- =====================================================
+     SECCIÓN 1: HERO / PORTADA
+     ===================================================== -->
+<section id="inicio" aria-labelledby="hero-title">
+  <div class="hero-bg" aria-hidden="true">
+    <!-- =====================================================
+         IMAGEN DE FONDO HERO (portada principal)
+         Descomenta y cambia por tu foto favorita de Shirley
+         Recomendación: foto horizontal, de alta calidad
+         ===================================================== -->
+    <!-- ===== CAMBIAR IMAGEN HERO AQUÍ ===== -->
+    <!-- <img src="fotos/foto-portada.jpg" alt="" loading="eager" /> -->
+
+    <!-- Foto de fondo: pareja romántica al atardecer -->
+    <img src="https://images.unsplash.com/photo-1504373879568-4e67e34cf965?w=1600&q=85" alt="" loading="eager" />
+
+    <div class="hero-overlay"></div>
+  </div>
+
+  <div class="hero-content">
+    <!-- ===== CAMBIAR FECHA AQUÍ ===== -->
+    <p class="hero-date">Para la chica más hermosa del mundo — Mayo 2026</p>
+
+    <!-- Badge de edad -->
+    <div class="hero-age-badge">✦ 22 años ✦</div>
+
+    <!-- ===== CAMBIAR TÍTULO PRINCIPAL AQUÍ ===== -->
+    <h1 class="hero-title" id="hero-title">
+      <span class="line-gold">Shirley</span><br/>
+      <span class="line-white">22 Añitos</span><br/>
+      <span class="line-pink">De Magia</span>
+    </h1>
+
+    <!-- ===== CAMBIAR SUBTÍTULO AQUÍ ===== -->
+    <p class="hero-subtitle">
+      Espero te guste lo que he preparado para ti. Cada detalle, cada palabra, cada foto, es un pedacito de lo que siento por ti.
+    </p>
+
+    <a href="#historia" class="hero-cta">Descubrir Nuestra Historia</a>
+  </div>
+
+  <div class="scroll-indicator" aria-hidden="true">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+
+<!-- =====================================================
+     SECCIÓN 2: NUESTRA HISTORIA
+
+     INSTRUCCIONES:
+     — Hay 5 bloques de historia (puedes agregar más copiando un bloque)
+     — Cambia los textos, fechas e imágenes de cada bloque
+     — Reemplaza las URLs de imágenes con tus fotos reales
+
+     CÓMO PONER TUS FOTOS:
+     Opción A — foto en la misma carpeta:
+       src="fotos/foto1.jpg"
+     Opción B — URL de internet (Google Photos, Imgur, etc.):
+       src="https://tu-url-de-foto.jpg"
+     ===================================================== -->
+<section id="historia" aria-labelledby="historia-title">
+  <div class="section-inner">
+    <p class="section-label reveal">Capítulo I</p>
+    <h2 class="section-title reveal" id="historia-title">
+      Nuestra <em>Historia</em>
+    </h2>
+    <div class="divider reveal">
+      <div class="divider-line"></div>
+      <div class="divider-symbol">❧</div>
+      <div class="divider-line"></div>
+    </div>
+
+    <div class="historia-grid">
+
+      <!-- ===== BLOQUE DE HISTORIA 1 ===== -->
+      <div class="historia-bloque">
+        <div class="historia-img-wrap reveal-left">
+          <img
+            src="image\primeracita.jpeg"
+            alt="El primer encuentro"
+            loading="lazy"
+          />
+        </div>
+        <div class="reveal-right">
+          <p class="historia-tag">El comienzo</p>
+          <h3 class="historia-heading">Nuestra primera cita</h3>
+          <p class="historia-text">
+            Yo sé que no te gustan que suba fotos que no te gustan, pero es la foto de nuestra primera cita y me encanta.
+            Fue el día que invite a comer hamburguesas en Santa Clara, y aunque el lugar no era nada del otro mundo, lo que pasó ese día fue mágico.
+            Recuerdo que hablamos por horas, como si nos conociéramos de toda la vida. Y ahí supe que quería seguir conociéndote.
+          </p>
+          <span class="historia-date-badge">Diciembre, 2022</span>
+        </div>
+      </div>
+
+      <!-- ===== BLOQUE DE HISTORIA 2 ===== -->
+      <div class="historia-bloque reverse">
+        <div class="historia-img-wrap reveal-right">
+          <img
+            src="image/hm.jpeg"
+            alt="Los primeros momentos"
+            loading="lazy"
+          />
+        </div>
+        <div class="reveal-left">
+          <p class="historia-tag">Nuestros primeros días</p>
+          <h3 class="historia-heading">Aprender a amarte</h3>
+          <p class="historia-text">
+            Cada día contigo ha sido un aprendizaje. Aprendí a amar de una forma que no conocía, a ser vulnerable, a confiar.
+            Nos reíamos de cosas tontas, compartíamos nuestras canciones favoritas, y cada pequeño momento se sentía como un tesoro.
+            Me encanta estar contigo, y me encanta que tuve la oportunidad de conocerte.
+          </p>
+          <span class="historia-date-badge">Enero, 2023</span>
+        </div>
+      </div>
+
+      <!-- ===== BLOQUE DE HISTORIA 3 ===== -->
+      <div class="historia-bloque">
+        <div class="historia-img-wrap reveal-left">
+          <img
+            src="image/pintados.jpeg"
+            alt="Nuestras caritas"
+            loading="lazy"
+          />
+        </div>
+        <div class="reveal-right">
+          <p class="historia-tag">Las aventuras</p>
+          <h3 class="historia-heading">El mundo se hizo más grande</h3>
+          <p class="historia-text">
+            Nuestra primera vez pintando nuestras manos y pintandonos nuestras caritas.
+            No sé por qué, pero ese día me sentí como un niño pequeño, feliz y sin preocupaciones. Me encanta que podamos ser así de tontos juntos.
+          </p>
+          <span class="historia-date-badge">Marzo, 2023</span>
+        </div>
+      </div>
+
+      <!-- ===== BLOQUE DE HISTORIA 4 ===== -->
+      <div class="historia-bloque reverse">
+        <div class="historia-img-wrap reveal-right">
+          <img
+            src="image/guapa.jpeg"
+            alt="Momentos difíciles"
+            loading="lazy"
+          />
+        </div>
+        <div class="reveal-left">
+          <p class="historia-tag">Los momentos divertidos</p>
+          <h3 class="historia-heading">Conociendo a mi familia</h3>
+          <p class="historia-text">
+            Primera vez conociendo a mi familia, y aunque al principio estabas nerviosa, terminamos todos riendo y pasándola bien.
+            La foto que tomé tal vez no te guste, pero me encanta cuando mi galería se llena de ti.
+            Gracias por ser parte de mi familia, mi niña.
+          </p>
+          <span class="historia-date-badge">Abril, 2023</span>
+        </div>
+      </div>
+
+      <!-- ===== BLOQUE DE HISTORIA 5 ===== -->
+      <div class="historia-bloque">
+        <div class="historia-img-wrap reveal-left">
+          <img
+            src="image/conciertojuntos.jpeg"
+            alt="Hoy y siempre"
+            loading="lazy"
+          />
+        </div>
+        <div class="reveal-right">
+          <p class="historia-tag">Hoy y siempre</p>
+          <h3 class="historia-heading">Lo que somos ahora</h3>
+          <p class="historia-text">
+            Ya no sé cómo era mi vida antes de ti, y ya no me interesa saberlo.
+            Eres la constante, el ancla, el motivo por el que algunos días simplemente
+            vale la pena. Gracias por elegirme cada día, guapa. Gracias por ser tú.
+            Hoy, en tu cumpleaños, solo quiero que sepas que eres lo mejor que me ha pasado.
+          </p>
+          <span class="historia-date-badge">Hoy ♥</span>
+        </div>
+      </div>
+
+    </div><!-- /historia-grid -->
+  </div>
+</section>
+
+
+<!-- =====================================================
+     SECCIÓN 3: GALERÍA — 50 FOTOS TIPO POLAROID
+
+     INSTRUCCIONES:
+     — Hay 50 polaroids. Reemplaza CADA URL de imagen con tu foto
+     — Cambia también el texto del data-caption y polaroid-caption
+     — data-src = la foto que se ve al hacer clic (resolución alta)
+     — src = miniatura (resolución baja, carga más rápido)
+
+     CÓMO ORGANIZAR TUS FOTOS (recomendado):
+     Crea una carpeta "fotos/" y pon tus fotos ahí:
+       fotos/playa.jpg, fotos/cena.jpg, etc.
+
+     CATEGORÍAS disponibles para el filtro (data-cat):
+       "juntos"  = fotos en pareja
+       "viajes"  = fotos de viajes
+       "especial" = momentos especiales
+       "ella"    = fotos de Shirley sola
+     ===================================================== -->
+<section id="galeria" aria-labelledby="galeria-title">
+  <div class="section-inner">
+    <p class="section-label reveal">Capítulo II</p>
+    <h2 class="section-title reveal" id="galeria-title">
+      Nuestra <em>Galería</em>
+    </h2>
+    <div class="divider reveal">
+      <div class="divider-line"></div>
+      <div class="divider-symbol">❧</div>
+      <div class="divider-line"></div>
+    </div>
+
+    <!-- Filtros por categoría -->
+    <div class="galeria-tabs reveal">
+      <button class="galeria-tab active" data-filter="all">Todas</button>
+      <button class="galeria-tab" data-filter="juntos">Juntos</button>
+      <button class="galeria-tab" data-filter="viajes">Viajes</button>
+      <button class="galeria-tab" data-filter="especial">Especiales</button>
+      <button class="galeria-tab" data-filter="ella">Shirley</button>
+    </div>
+
+    <!-- =====================================================
+         GALERÍA: 50 FOTOS — CAMBIA CADA UNA
+         Formato de cada polaroid:
+           data-src  = foto grande (click para ver)
+           data-cat  = categoría ("juntos", "viajes", "especial", "ella")
+           data-caption = título al hacer click
+           src       = miniatura (puede ser la misma foto)
+           alt       = descripción
+           caption   = texto debajo del polaroid
+         ===================================================== -->
+    <div class="galeria-grid" id="galeria-grid">
+
+      <!-- FOTO 1 — ===== CAMBIAR ===== -->
+      <div class="polaroid reveal" tabindex="0" role="button" data-cat="juntos"
+           data-src="image/fotojuntos.jpeg"
+           data-caption="Nuestro primer día ♥">
+  <div class="polaroid-inner">
+    <div class="polaroid-front">
+      <img src="image/fotojuntos.jpeg" alt="Foto 1" loading="lazy" />
+      <span class="polaroid-caption">Siempre juntos</span>
+    </div>
+    <div class="polaroid-back">
+      <div class="polaroid-back-heart">♥</div>
+      <div class="polaroid-back-text">Siempre juntos ♥</div>
+      <div class="polaroid-back-label">ver foto</div>
+    </div>
+  </div>
+</div>
+
+      <!-- FOTO 2 — ===== CAMBIAR ===== -->
+      <div class="polaroid reveal" tabindex="0" role="button" data-cat="juntos"
+           data-src="image/comida1.jpeg"
+           data-caption="Juntos siempre ♥">
+  <div class="polaroid-inner">
+    <div class="polaroid-front">
+      <img src="image/comida1.jpeg" alt="Foto 2" loading="lazy" />
+      <span class="polaroid-caption">Comiendo</span>
+    </div>
+    <div class="polaroid-back">
+      <div class="polaroid-back-heart">♥</div>
+      <div class="polaroid-back-text">Comiendo ♥</div>
+      <div class="polaroid-back-label">ver foto</div>
+    </div>
+  </div>
+</div>
+
+      <!-- FOTO 3 — ===== CAMBIAR ===== -->
+      <div class="polaroid reveal" tabindex="0" role="button" data-cat="viajes"
+           data-src="image/icacargados.jpeg"
+           data-caption="Nuestra aventura">
+  <div class="polaroid-inner">
+    <div class="polaroid-front">
+      <img src="image/icacargados.jpeg" alt="Foto 3" loading="lazy" />
+      <span class="polaroid-caption">Nuestra aventura</span>
+    </div>
+    <div class="polaroid-back">
+      <div class="polaroid-back-heart">♥</div>
+      <div class="polaroid-back-text">Nuestra aventura</div>
+      <div class="polaroid-back-label">ver foto</div>
+    </div>
+  </div>
+</div>
+
+      <!-- FOTO 4 — ===== CAMBIAR ===== -->
+      <div class="polaroid reveal" tabindex="0" role="button" data-cat="especial"
+           data-src="image/parquedelasaguas2.jpeg"
+           data-caption="Momentos eternos">
+  <div class="polaroid-inner">
+    <div class="polaroid-front">
+      <img src="image/parquedelasaguas2.jpeg" alt="Foto 4" loading="lazy" />
+      <span class="polaroid-caption">Momentos eternos</span>
+    </div>
+    <div class="polaroid-back">
+      <div class="polaroid-back-heart">♥</div>
+      <div class="polaroid-back-text">Momentos eternos</div>
+      <div class="polaroid-back-label">ver foto</div>
+    </div>
+  </div>
+</div>
+
+      <!-- FOTO 5 — ===== CAMBIAR ===== -->
+      <div class="polaroid reveal" tabindex="0" role="button" data-cat="ella"
+           data-src="image/baile.jpeg"
+           data-caption="Mi Shirley hermosa">
+  <div class="polaroid-inner">
+    <div class="polaroid-front">
+      <img src="image/baile.jpeg" alt="Foto 5" loading="lazy" />
+      <span class="polaroid-caption">Mi Shirley</span>
+    </div>
+    <div class="polaroid-back">
+      <div class="polaroid-back-heart">♥</div>
+      <div class="polaroid-back-text">Mi Shirley hermosa</div>
+      <div class="polaroid-back-label">ver foto</div>
+    </div>
+  </div>
+</div>
+
+      <!-- FOTO 6 — ===== CAMBIAR ===== -->
+      <div class="polaroid reveal" tabindex="0" role="button" data-cat="juntos"
+           data-src="image/anilloprecioso2.jpeg"
+           data-caption="Un cuento de amor">
+  <div class="polaroid-inner">
+    <div class="polaroid-front">
+      <img src="image/anilloprecioso2.jpeg" alt="Foto 6" loading="lazy" />
+      <span class="polaroid-caption">Un cuento de amor</span>
+    </div>
+    <div class="polaroid-back">
+      <div class="polaroid-back-heart">♥</div>
+      <div class="polaroid-back-text">Un cuento de amor</div>
+      <div class="polaroid-back-label">ver foto</div>
+    </div>
+  </div>
+</div>
+
+      <!-- FOTO 7 — ===== CAMBIAR ===== -->
+      <div class="polaroid reveal" tabindex="0" role="button" data-cat="viajes"
+           data-src="image/sonrisaica.jpeg"
+           data-caption="La Laguna con ella">
+  <div class="polaroid-inner">
+    <div class="polaroid-front">
+      <img src="image/sonrisaica.jpeg" alt="Foto 7" loading="lazy" />
+      <span class="polaroid-caption">La Laguna</span>
+    </div>
+    <div class="polaroid-back">
+      <div class="polaroid-back-heart">♥</div>
+      <div class="polaroid-back-text">La playa con ella</div>
+      <div class="polaroid-back-label">ver foto</div>
+    </div>
+  </div>
+</div>
+
+      <!-- FOTO 8 — ===== CAMBIAR ===== -->
+      <div class="polaroid reveal" tabindex="0" role="button" data-cat="especial"
+           data-src="image/cumpleañosfotoyoshio.jpeg"
+           data-caption="Celebrando juntos">
+  <div class="polaroid-inner">
+    <div class="polaroid-front">
+      <img src="image/cumpleañosfotoyoshio.jpeg" alt="Foto 8" loading="lazy" />
+      <span class="polaroid-caption">Celebrando</span>
+    </div>
+    <div class="polaroid-back">
+      <div class="polaroid-back-heart">♥</div>
+      <div class="polaroid-back-text">Celebrando juntos</div>
+      <div class="polaroid-back-label">ver foto</div>
+    </div>
+  </div>
+</div>
+
+      <!-- FOTO 9 — ===== CAMBIAR ===== -->
+      <div class="polaroid reveal" tabindex="0" role="button" data-cat="juntos"
+           data-src="image/hm.jpeg"
+           data-caption="En las montañas">
+  <div class="polaroid-inner">
+    <div class="polaroid-front">
+      <img src="image/hm.jpeg" alt="Foto 9" loading="lazy" />
+      <span class="polaroid-caption">Comprando</span>
+    </div>
+    <div class="polaroid-back">
+      <div class="polaroid-back-heart">♥</div>
+      <div class="polaroid-back-text">Comprando juntos</div>
+      <div class="polaroid-back-label">ver foto</div>
+    </div>
+  </div>
+</div>
+
+      <!-- FOTO 10 — ===== CAMBIAR ===== -->
+      <div class="polaroid reveal" tabindex="0" role="button" data-cat="ella"
+           data-src="image/shirleyfotomuseo.jpeg"
+           data-caption="La más bella">
+  <div class="polaroid-inner">
+    <div class="polaroid-front">
+      <img src="image/shirleyfotomuseo.jpeg" alt="Foto 10" loading="lazy" />
+      <span class="polaroid-caption">La más bella</span>
+    </div>
+    <div class="polaroid-back">
+      <div class="polaroid-back-heart">♥</div>
+      <div class="polaroid-back-text">La más bella</div>
+      <div class="polaroid-back-label">ver foto</div>
+    </div>
+  </div>
+</div>
+
+      <!-- FOTO 11 — ===== CAMBIAR ===== -->
+      <div class="polaroid reveal" tabindex="0" role="button" data-cat="viajes"
+           data-src="image/parquechino2.jpeg"
+           data-caption="Explorando el mundo">
+  <div class="polaroid-inner">
+    <div class="polaroid-front">
+      <img src="image/parquechino2.jpeg" alt="Foto 11" loading="lazy" />
+      <span class="polaroid-caption">Explorando</span>
+    </div>
+    <div class="polaroid-back">
+      <div class="polaroid-back-heart">♥</div>
+      <div class="polaroid-back-text">Explorando el mundo</div>
+      <div class="polaroid-back-label">ver foto</div>
+    </div>
+  </div>
+</div>
+
+      <!-- FOTO 12 — ===== CAMBIAR ===== -->
+      <div class="polaroid reveal" tabindex="0" role="button" data-cat="juntos"
+           data-src="image/memeratoncito.jpeg"
+           data-caption="Caminando juntos">
+  <div class="polaroid-inner">
+    <div class="polaroid-front">
+      <img src="image/memeratoncito.jpeg" alt="Foto 12" loading="lazy" />
+      <span class="polaroid-caption">Quédate conmigo</span>
+    </div>
+    <div class="polaroid-back">
+      <div class="polaroid-back-heart">♥</div>
+      <div class="polaroid-back-text">Quédate conmigo</div>
+      <div class="polaroid-back-label">ver foto</div>
+    </div>
+  </div>
+</div>
+
+      <!-- FOTO 13 — ===== CAMBIAR ===== -->
+      <div class="polaroid reveal" tabindex="0" role="button" data-cat="especial"
+           data-src="image/cine4.jpeg"
+           data-caption="Momentos únicos">
+  <div class="polaroid-inner">
+    <div class="polaroid-front">
+      <img src="image/cine4.jpeg" alt="Foto 13" loading="lazy" />
+      <span class="polaroid-caption">Momentos únicos</span>
+    </div>
+    <div class="polaroid-back">
+      <div class="polaroid-back-heart">♥</div>
+      <div class="polaroid-back-text">Momentos únicos</div>
+      <div class="polaroid-back-label">ver foto</div>
+    </div>
+  </div>
+</div>
+
+      <!-- FOTO 14 — ===== CAMBIAR ===== -->
+      <div class="polaroid reveal" tabindex="0" role="button" data-cat="ella"
+           data-src="image/parquedelasaguas.jpeg"
+           data-caption="Mi sol">
+  <div class="polaroid-inner">
+    <div class="polaroid-front">
+      <img src="image/parquedelasaguas.jpeg" alt="Foto 14" loading="lazy" />
+      <span class="polaroid-caption">Mi sol</span>
+    </div>
+    <div class="polaroid-back">
+      <div class="polaroid-back-heart">♥</div>
+      <div class="polaroid-back-text">Mi sol</div>
+      <div class="polaroid-back-label">ver foto</div>
+    </div>
+  </div>
+</div>
+
+      <!-- FOTO 15 — ===== CAMBIAR ===== -->
+      <div class="polaroid reveal" tabindex="0" role="button" data-cat="juntos"
+           data-src="image/comida5.jpeg"
+           data-caption="Nuestra primera cena">
+  <div class="polaroid-inner">
+    <div class="polaroid-front">
+      <img src="image/comida5.jpeg" alt="Foto 15" loading="lazy" />
+      <span class="polaroid-caption">Museo Larco</span>
+    </div>
+    <div class="polaroid-back">
+      <div class="polaroid-back-heart">♥</div>
+      <div class="polaroid-back-text">Nuestra primera cena</div>
+      <div class="polaroid-back-label">ver foto</div>
+    </div>
+  </div>
+</div>
+
+      <!-- FOTO 16 — ===== CAMBIAR ===== -->
+      <div class="polaroid reveal" tabindex="0" role="button" data-cat="viajes"
+           data-src="image/fotocarro.jpeg"
+           data-caption="Cielos de película">
+  <div class="polaroid-inner">
+    <div class="polaroid-front">
+      <img src="image/fotocarro.jpeg" alt="Foto 16" loading="lazy" />
+      <span class="polaroid-caption">Carreritas</span>
+    </div>
+    <div class="polaroid-back">
+      <div class="polaroid-back-heart">♥</div>
+      <div class="polaroid-back-text">Carreritas</div>
+      <div class="polaroid-back-label">ver foto</div>
+    </div>
+  </div>
+</div>
+
+      <!-- FOTO 17 — ===== CAMBIAR ===== -->
+      <div class="polaroid reveal" tabindex="0" role="button" data-cat="especial"
+           data-src="image/cumpleañosmadre.jpeg"
+           data-caption="Una fecha para recordar">
+  <div class="polaroid-inner">
+    <div class="polaroid-front">
+      <img src="image/cumpleañosmadre.jpeg" alt="Foto 17" loading="lazy" />
+      <span class="polaroid-caption">Para recordar</span>
+    </div>
+    <div class="polaroid-back">
+      <div class="polaroid-back-heart">♥</div>
+      <div class="polaroid-back-text">Una fecha para recordar</div>
+      <div class="polaroid-back-label">ver foto</div>
+    </div>
+  </div>
+</div>
+
+      <!-- FOTO 18 — ===== CAMBIAR ===== -->
+      <div class="polaroid reveal" tabindex="0" role="button" data-cat="ella"
+           data-src="image/ellaeshermosa.jpeg"
+           data-caption="Radiante como siempre">
+  <div class="polaroid-inner">
+    <div class="polaroid-front">
+      <img src="image/ellaeshermosa.jpeg" alt="Foto 18" loading="lazy" />
+      <span class="polaroid-caption">Radiante</span>
+    </div>
+    <div class="polaroid-back">
+      <div class="polaroid-back-heart">♥</div>
+      <div class="polaroid-back-text">Radiante como siempre</div>
+      <div class="polaroid-back-label">ver foto</div>
+    </div>
+  </div>
+</div>
+
+      <!-- FOTO 19 — ===== CAMBIAR ===== -->
+      <div class="polaroid reveal" tabindex="0" role="button" data-cat="juntos"
+           data-src="image/tapados.jpeg"
+           data-caption="Nuestro atardecer favorito">
+  <div class="polaroid-inner">
+    <div class="polaroid-front">
+      <img src="image/tapados.jpeg" alt="Foto 19" loading="lazy" />
+      <span class="polaroid-caption">Luna llena</span>
+    </div>
+    <div class="polaroid-back">
+      <div class="polaroid-back-heart">♥</div>
+      <div class="polaroid-back-text">Nuestra luna llena</div>
+      <div class="polaroid-back-label">ver foto</div>
+    </div>
+  </div>
+</div>
+
+      <!-- FOTO 20 — ===== CAMBIAR ===== -->
+      <div class="polaroid reveal" tabindex="0" role="button" data-cat="viajes"
+           data-src="image/carroicabeso.jpeg"
+           data-caption="La ciudad de noche">
+  <div class="polaroid-inner">
+    <div class="polaroid-front">
+      <img src="image/carroicabeso.jpeg" alt="Foto 20" loading="lazy" />
+      <span class="polaroid-caption">Nuestro atardecer</span>
+    </div>
+    <div class="polaroid-back">
+      <div class="polaroid-back-heart">♥</div>
+      <div class="polaroid-back-text">Nuestro atardecer</div>
+      <div class="polaroid-back-label">ver foto</div>
+    </div>
+  </div>
+</div>
+
+      <!-- FOTO 21 — ===== CAMBIAR ===== -->
+      <div class="polaroid reveal" tabindex="0" role="button" data-cat="especial"
+           data-src="image/cine2.jpeg"
+           data-caption="El primer regalo">
+  <div class="polaroid-inner">
+    <div class="polaroid-front">
+      <img src="image/cine2.jpeg" alt="Foto 21" loading="lazy" />
+      <span class="polaroid-caption">El primer cine</span>
+    </div>
+    <div class="polaroid-back">
+      <div class="polaroid-back-heart">♥</div>
+      <div class="polaroid-back-text">El primer cine</div>
+      <div class="polaroid-back-label">ver foto</div>
+    </div>
+  </div>
+</div>
+
+      <!-- FOTO 22 — ===== CAMBIAR ===== -->
+      <div class="polaroid reveal" tabindex="0" role="button" data-cat="juntos"
+           data-src="image/concierto.jpeg"
+           data-caption="Nuestra paz">
+  <div class="polaroid-inner">
+    <div class="polaroid-front">
+      <img src="image/concierto.jpeg" alt="Foto 22" loading="lazy" />
+      <span class="polaroid-caption">Primer concierto</span>
+    </div>
+    <div class="polaroid-back">
+      <div class="polaroid-back-heart">♥</div>
+      <div class="polaroid-back-text">Primer concierto</div>
+      <div class="polaroid-back-label">ver foto</div>
+    </div>
+  </div>
+</div>
+
+      <!-- FOTO 23 — ===== CAMBIAR ===== -->
+      <div class="polaroid reveal" tabindex="0" role="button" data-cat="ella"
+           data-src="image/guapafoto.jpeg"
+           data-caption="Sus ojos">
+  <div class="polaroid-inner">
+    <div class="polaroid-front">
+      <img src="image/guapafoto.jpeg" alt="Foto 23" loading="lazy" />
+      <span class="polaroid-caption">Princesa</span>
+    </div>
+    <div class="polaroid-back">
+      <div class="polaroid-back-heart">♥</div>
+      <div class="polaroid-back-text">Princesa</div>
+      <div class="polaroid-back-label">ver foto</div>
+    </div>
+  </div>
+</div>
+
+      <!-- FOTO 24 — ===== CAMBIAR ===== -->
+      <div class="polaroid reveal" tabindex="0" role="button" data-cat="viajes"
+           data-src="image/besoica.jpeg"
+           data-caption="Mar y cielo">
+  <div class="polaroid-inner">
+    <div class="polaroid-front">
+      <img src="image/besoica.jpeg" alt="Foto 24" loading="lazy" />
+      <span class="polaroid-caption">Mar y cielo</span>
+    </div>
+    <div class="polaroid-back">
+      <div class="polaroid-back-heart">♥</div>
+      <div class="polaroid-back-text">Mar y cielo</div>
+      <div class="polaroid-back-label">ver foto</div>
+    </div>
+  </div>
+</div>
+
+      <!-- FOTO 25 — ===== CAMBIAR ===== -->
+      <div class="polaroid reveal" tabindex="0" role="button" data-cat="especial"
+           data-src="image/cenajuntos.jpeg"
+           data-caption="Nuestro lugar secreto">
+  <div class="polaroid-inner">
+    <div class="polaroid-front">
+      <img src="image/cenajuntos.jpeg" alt="Foto 25" loading="lazy" />
+      <span class="polaroid-caption">Nuestro lugar</span>
+    </div>
+    <div class="polaroid-back">
+      <div class="polaroid-back-heart">♥</div>
+      <div class="polaroid-back-text">Nuestro lugar secreto</div>
+      <div class="polaroid-back-label">ver foto</div>
+    </div>
+  </div>
+</div>
+
+      <!-- FOTO 26 — ===== CAMBIAR ===== -->
+      <div class="polaroid reveal" tabindex="0" role="button" data-cat="juntos"
+           data-src="image/besitos.jpeg"
+           data-caption="Italia en nuestros sueños">
+  <div class="polaroid-inner">
+    <div class="polaroid-front">
+      <img src="image/besitos.jpeg" alt="Foto 26" loading="lazy" />
+      <span class="polaroid-caption">En nuestros sueños</span>
+    </div>
+    <div class="polaroid-back">
+      <div class="polaroid-back-heart">♥</div>
+      <div class="polaroid-back-text">Centro de Lima</div>
+      <div class="polaroid-back-label">ver foto</div>
+    </div>
+  </div>
+</div>
+
+      <!-- FOTO 27 — ===== CAMBIAR ===== -->
+      <div class="polaroid reveal" tabindex="0" role="button" data-cat="ella"
+           data-src="image/comida4foto.jpeg"
+           data-caption="Su sonrisa lo es todo">
+  <div class="polaroid-inner">
+    <div class="polaroid-front">
+      <img src="image/comida4foto.jpeg" alt="Foto 27" loading="lazy" />
+      <span class="polaroid-caption">Su sonrisa</span>
+    </div>
+    <div class="polaroid-back">
+      <div class="polaroid-back-heart">♥</div>
+      <div class="polaroid-back-text">Su sonrisa lo es todo</div>
+      <div class="polaroid-back-label">ver foto</div>
+    </div>
+  </div>
+</div>
+
+      <!-- FOTO 28 — ===== CAMBIAR ===== -->
+      <div class="polaroid reveal" tabindex="0" role="button" data-cat="viajes"
+           data-src="image/icamanos.jpeg"
+           data-caption="La ciudad que nos vio juntos">
+  <div class="polaroid-inner">
+    <div class="polaroid-front">
+      <img src="image/icamanos.jpeg" alt="Foto 28" loading="lazy" />
+      <span class="polaroid-caption">Ciudad de Ica</span>
+    </div>
+    <div class="polaroid-back">
+      <div class="polaroid-back-heart">♥</div>
+      <div class="polaroid-back-text">Ciudad de Ica</div>
+      <div class="polaroid-back-label">ver foto</div>
+    </div>
+  </div>
+</div>
+
+      <!-- FOTO 29 — ===== CAMBIAR ===== -->
+      <div class="polaroid reveal" tabindex="0" role="button" data-cat="especial"
+           data-src="image/museolarco.jpeg"
+           data-caption="Su cumpleaños anterior">
+  <div class="polaroid-inner">
+    <div class="polaroid-front">
+      <img src="image/museolarco.jpeg" alt="Foto 29" loading="lazy" />
+      <span class="polaroid-caption">Primera vez en Museo Larco</span>
+    </div>
+    <div class="polaroid-back">
+      <div class="polaroid-back-heart">♥</div>
+      <div class="polaroid-back-text">Primera vez en Museo Larco</div>
+      <div class="polaroid-back-label">ver foto</div>
+    </div>
+  </div>
+</div>
+
+      <!-- FOTO 30 — ===== CAMBIAR ===== -->
+      <div class="polaroid reveal" tabindex="0" role="button" data-cat="juntos"
+           data-src="image/halloween.jpeg"
+           data-caption="Nuestro rincón favorito">
+  <div class="polaroid-inner">
+    <div class="polaroid-front">
+      <img src="image/halloween.jpeg" alt="Foto 30" loading="lazy" />
+      <span class="polaroid-caption">Nuestro Halloween</span>
+    </div>
+    <div class="polaroid-back">
+      <div class="polaroid-back-heart">♥</div>
+      <div class="polaroid-back-text">Nuestro Halloween</div>
+      <div class="polaroid-back-label">ver foto</div>
+    </div>
+  </div>
+</div>
+
+
+
+    </div><!-- /galeria-grid -->
+  </div>
+</section>
+
+
+<!-- =====================================================
+     LIGHTBOX — no necesitas editarlo
+     ===================================================== -->
+<div id="lightbox" role="dialog" aria-modal="true" aria-label="Imagen ampliada">
+  <button id="lightbox-close" aria-label="Cerrar">×</button>
+  <button class="lightbox-arrow" id="lb-prev" aria-label="Anterior">‹</button>
+  <img id="lightbox-img" src="" alt="Imagen ampliada" />
+  <p id="lightbox-caption"></p>
+  <button class="lightbox-arrow" id="lb-next" aria-label="Siguiente">›</button>
+</div>
+
+
+<!-- =====================================================
+     SECCIÓN 4: RECUERDOS / TIMELINE
+     ===================================================== -->
+<section id="recuerdos" aria-labelledby="recuerdos-title">
+  <div class="section-inner">
+    <p class="section-label reveal">Capítulo III</p>
+    <h2 class="section-title reveal" id="recuerdos-title">
+      Nuestros <em>Recuerdos</em>
+    </h2>
+    <div class="divider reveal">
+      <div class="divider-line"></div>
+      <div class="divider-symbol">❧</div>
+      <div class="divider-line"></div>
+    </div>
+
+    <div class="timeline">
+
+      <!-- ===== RECUERDO 1 — EDITAR ===== -->
+      <div class="timeline-item reveal">
+        <!-- ===== CAMBIAR FECHA ===== -->
+        <p class="timeline-year">Marzo 2026</p>
+        <!-- ===== CAMBIAR TÍTULO ===== -->
+        <h3 class="timeline-title">Nuestro primer viaje</h3>
+        <!-- ===== CAMBIAR TEXTO ===== -->
+        <p class="timeline-text">
+          Nuestro primer viaje juntos. Un recuerdo inolvidable. La primera vez saliendo de Lima a Ica.
+          La emoción de descubrir nuevos lugares contigo fue única. Cada momento a tu lado se volvió mágico.
+          Espero que este sea el primero de muchos viajes juntos. Te amo, mi niña.
+        </p>
+        <!-- ===== IMAGEN DEL RECUERDO: descomenta y pon tu foto ===== -->
+        <img class="timeline-img reveal" src="image/fotobonitaica.jpeg" alt="La primera cita" loading="lazy" />
+      </div>
+
+      <!-- ===== RECUERDO 2 — EDITAR ===== -->
+      <div class="timeline-item reveal">
+        <!-- ===== CAMBIAR FECHA ===== -->
+        <p class="timeline-year">Octubre 2024</p>
+        <h3 class="timeline-title">Celebrando Halloween</h3>
+        <p class="timeline-text">
+          Celebramos Halloween en Miraflores, paseando por las calles y disfrutando de la noche.
+          Tremendo traje de Max Goofy que tenías, tanta química que se sentía en el aire. Fue una noche mágica, llena de risas y momentos que atesoraré por siempre.
+        </p>
+        <!-- ===== IMAGEN: descomenta y pon tu foto ===== -->
+        <img class="timeline-img reveal"
+             src="image/halloween.jpeg"
+             alt="Te dije que me gustabas" loading="lazy" />
+      </div>
+
+      <!-- ===== RECUERDO 3 — EDITAR ===== -->
+      <div class="timeline-item reveal">
+        <!-- ===== CAMBIAR FECHA ===== -->
+        <p class="timeline-year">Enero 2024</p>
+        <h3 class="timeline-title">Primer Aniversario</h3>
+        <p class="timeline-text">
+          Me acuerdo que no tenía mucho dinero por tantos problemas que tenía. Me trajista una tortita para celebrar nuestro primer año juntos.
+          Fue un detalle tan lindo que me hizo sentir la persona más especial del mundo. Ese día entendí que lo importante no es el regalo, sino el amor y la dedicación que le pones a cada momento juntos.
+        </p>
+        <!-- ===== IMAGEN: descomenta y pon tu foto ===== -->
+        <img class="timeline-img reveal" src="image/primeraño.jpeg" alt="El primer viaje juntos" loading="lazy" />
+      </div>
+
+      <!-- ===== RECUERDO 4 — EDITAR ===== -->
+      <div class="timeline-item reveal">
+        <!-- ===== CAMBIAR FECHA ===== -->
+        <p class="timeline-year">Enero 2025</p>
+        <h3 class="timeline-title">Segundo Aniversario</h3>
+        <p class="timeline-text">
+          Luego de un año lleno de altibajas, tuve el honor de celebrar nuestro segundo aniversario juntos. 
+          Un aniversario diferente, te lleve a cenar al Restaurante Museo Larco, un lugar que siempre quisiste conocer. 
+          Fue una noche mágica, llena de risas, buena comida y momentos que atesoraré por siempre. 
+          Gracias por ser mi compañera de vida, mi mejor amiga y el amor de mi vida. Te amo, mi guapis.
+        </p>
+        <img class="timeline-img reveal"
+             src="image/primeracena.jpeg"
+             alt="Cuando lloraste y te abracé" loading="lazy" />
+      </div>
+
+      <!-- ===== RECUERDO 5 — EDITAR ===== -->
+      <div class="timeline-item reveal">
+        <!-- ===== CAMBIAR FECHA ===== -->
+        <p class="timeline-year">Siempre</p>
+        <h3 class="timeline-title">Comida y más comida</h3>
+        <p class="timeline-text">
+          Siempre tenemos la misma hambre para comidas, y siempre tenemos la misma comida para comer.
+          La verdad que comparto todo contigo, pero la comida es algo que me encanta compartir contigo. 
+          Desde nuestras cenas en casa hasta nuestras aventuras gastronómicas por la ciudad.
+        </p>
+        <img class="timeline-img reveal"
+             src="image/comida7.jpeg"
+             alt="La Navidad contigo" loading="lazy" />
+      </div>
+
+      <!-- ===== RECUERDO 6 — EDITAR ===== -->
+      <div class="timeline-item reveal">
+        <!-- ===== CAMBIAR FECHA ===== -->
+        <p class="timeline-year">Siempre</p>
+        <h3 class="timeline-title">Las comidas preparadas</h3>
+        <p class="timeline-text">
+          Cada comida que hemos preparado juntos se ha convertido en un recuerdo especial. 
+          Los wantanes que preparamos juntos, las comidas japonesas y chinas que nos encantan.
+          Me encanta cocinar contigo, mi chef favorita.
+        </p>
+        <img class="timeline-img reveal"
+             src="image/almuerzojuntos.jpeg"
+             alt="2024 juntos" loading="lazy" />
+      </div>
+
+      <!-- ===== RECUERDO 7 — EDITAR ===== -->
+      <div class="timeline-item reveal">
+        <!-- ===== CAMBIAR FECHA ===== -->
+        <p class="timeline-year">Hoy — Mayo 2026</p>
+        <h3 class="timeline-title">Tu cumpleaños 22 ♥</h3>
+        <p class="timeline-text">
+          22 añitos que ya cumples. Hoy, más que nunca,
+          quiero que sepas que cada día a tu lado es un privilegio que no doy por sentado.
+          Feliz cumpleaños, mi princesita. Que este año sea el mejor de todos.
+        </p>
+        <img class="timeline-img reveal"
+             src="image/comida4foto.jpeg"
+             alt="Tu cumpleaños 22" loading="lazy" />
+      </div>
+
+      <!-- ===== AGREGA MÁS RECUERDOS AQUÍ copiando el bloque de arriba ===== -->
+
+    </div>
+  </div>
+</section>
+
+
+
+
+<!-- =====================================================
+     SECCIÓN 6: VIDEOS — 10 VIDEOS
+
+     INSTRUCCIONES PARA PONER TUS VIDEOS:
+     Opción A — Video de YouTube (recomendado):
+       Cambia el VIDEO_ID_AQUI por el ID del video de YouTube
+       El ID es la parte después de "v=" en la URL
+       Ejemplo: youtube.com/watch?v=dQw4w9WgXcQ → ID = dQw4w9WgXcQ
+
+     Opción B — Video local:
+       Descomenta el bloque <video> y comenta el <iframe>
+       Sube tu video .mp4 a la carpeta
+
+     Las etiquetas de video (texto debajo) son completamente editables
+     ===================================================== -->
+<section id="videos" aria-labelledby="videos-title">
+  <div class="section-inner">
+    <p class="section-label reveal">Especial</p>
+    <h2 class="section-title reveal" id="videos-title">
+      Nuestros <em>Videos</em>
+    </h2>
+    <div class="divider reveal">
+      <div class="divider-line"></div>
+      <div class="divider-symbol">❧</div>
+      <div class="divider-line"></div>
+    </div>
+
+    <div class="videos-grid">
+
+      <!-- ===== VIDEO 1 — CAMBIAR VIDEO_ID ===== -->
+      <div class="video-card reveal">
+        <!-- OPCIÓN YOUTUBE: reemplaza VIDEO_ID_AQUI -->
+        <iframe loading="lazy"
+          src="image/bailejuntos.mp4"
+          title="Video 1 — Shirley"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
+        <!-- ===== CAMBIAR ETIQUETA ===== -->
+        <p class="video-card-label">♥ Nuestro primer video juntos</p>
+      </div>
+
+      <!-- ===== VIDEO 2 — CAMBIAR VIDEO_ID ===== -->
+      <div class="video-card reveal">
+        <iframe loading="lazy"
+          src="image/viajeicaselena.mp4"
+          title="Video 2"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
+        <!-- ===== CAMBIAR ETIQUETA ===== -->
+        <p class="video-card-label">♥ El viaje que más recuerdo</p>
+      </div>
+
+      <!-- ===== VIDEO 3 — CAMBIAR VIDEO_ID ===== -->
+      <div class="video-card reveal">
+        <iframe loading="lazy"
+          src="image/39meses.mp4"
+          title="Video 3"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
+        <!-- ===== CAMBIAR ETIQUETA ===== -->
+        <p class="video-card-label">♥ Así ríes tú</p>
+      </div>
+
+      <!-- ===== VIDEO 4 — CAMBIAR VIDEO_ID ===== -->
+      <div class="video-card reveal">
+        <iframe loading="lazy"
+          src="image/cumpleañosyoshio.mp4"
+          title="Video 4"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
+        <!-- ===== CAMBIAR ETIQUETA ===== -->
+        <p class="video-card-label">♥ Mi cumpleaños</p>
+      </div>
+
+      <!-- ===== VIDEO 5 — CAMBIAR VIDEO_ID ===== -->
+      <div class="video-card reveal">
+        <iframe loading="lazy"
+          src="image/viajeica.mp4"
+          title="Video 5"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
+        <!-- ===== CAMBIAR ETIQUETA ===== -->
+        <p class="video-card-label">♥ La primera aventura</p>
+      </div>
+
+      <!-- ===== VIDEO 6 — CAMBIAR VIDEO_ID ===== -->
+      <div class="video-card reveal">
+        <iframe loading="lazy"
+          src="image/villabaile.mp4"
+          title="Video 6"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
+        <!-- ===== CAMBIAR ETIQUETA ===== -->
+        <p class="video-card-label">♥ Bailando contigo</p>
+      </div>
+
+      <!-- ===== VIDEO 7 — CAMBIAR VIDEO_ID ===== -->
+      <div class="video-card reveal">
+        <iframe loading="lazy"
+          src="image/carroica.mp4"
+          title="Video 7"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
+        <!-- ===== CAMBIAR ETIQUETA ===== -->
+        <p class="video-card-label">♥ Esa tarde especial</p>
+      </div>
+
+      <!-- ===== VIDEO 8 — CAMBIAR VIDEO_ID ===== -->
+      <div class="video-card reveal">
+        <iframe loading="lazy"
+          src="image/39meses.mp4"
+          title="Video 8"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
+        <!-- ===== CAMBIAR ETIQUETA ===== -->
+        <p class="video-card-label">♥ 39 meses</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- =====================================================
+     SECCIÓN 7: CARTA DE AMOR
+
+     ===== INSTRUCCIONES =====
+     Esta es la carta más personal. Edita cada párrafo
+     con tus propias palabras para Shirley.
+     ===================================================== -->
+<section id="carta" aria-labelledby="carta-title">
+  <div class="section-inner">
+    <p class="section-label reveal">Desde el corazón</p>
+    <h2 class="section-title reveal" id="carta-title">
+      Una Carta para <em>Ti</em>
+    </h2>
+    <div class="divider reveal">
+      <div class="divider-line"></div>
+      <div class="divider-symbol">❧</div>
+      <div class="divider-line"></div>
+    </div>
+
+    <div class="carta-container reveal">
+      <!-- ===== CAMBIAR SALUDO ===== -->
+      <p class="carta-saludo">Mi querida Shirley,</p>
+
+      <div class="carta-texto">
+        <p>
+          Hoy cumples 22 años y yo llevo días pensando en cómo decirte todo esto
+          sin que se quede corto. La verdad es que no hay palabras exactas para
+          lo que siento cuando pienso en ti. Pero lo intento de todas formas,
+          porque te lo mereces, y porque hoy es tu día.
+        </p>
+        <p>
+          Cuando llegaste a mi vida, no tenía idea de lo que iba a pasar.
+          Solo sé que hubo un momento en que todo empezó a tener más sentido.
+          Tú le das sentido a muchas cosas que antes no lo tenían.
+          Eso no es poca cosa, Shirley. Eso es todo.
+        </p>
+        <p>
+          Me has enseñado que querer de verdad significa quedarse también cuando
+          no es fácil. Que el amor no es solo los momentos bonitos, sino también
+          los martes aburridos, las discusiones que duelen, los silencios incómodos
+          — y aun así elegirse. Tú me has elegido, y yo te elijo a ti cada día.
+        </p>
+        <p>
+          En estos 22 años de vida has construido una mujer extraordinaria.
+          Puede que no siempre lo veas, pero yo sí. Te veo cuando dudas y te lanzas igual.
+          Te veo cuando estás cansada y sigues. Te veo cuando amas, y es lo más
+          hermoso que existe. Ojalá algún día puedas verte como yo te veo.
+        </p>
+        <p>
+          Hoy solo quiero que sepas esto: no hay lugar en el mundo donde prefiera
+          estar que a tu lado. No hay persona con quien prefiera compartir lo que viene.
+          Eres mi lugar favorito, Shirley. Feliz cumpleaños.
+          Este año y todos los que vengan — contigo.
+        </p>
+        <p>
+          Gracias por dejarme quererte. Es el privilegio más grande de mi vida.
+        </p>
+      </div>
+
+      <!-- ===== CAMBIAR FIRMA ===== -->
+      <p class="carta-firma">Con todo mi amor — siempre tuyo ♥</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- =====================================================
+     SECCIÓN 8: CONTADOR DE TIEMPO JUNTOS
+
+     ===== CAMBIAR LA FECHA EN scripts.js =====
+     Busca en scripts.js la línea:
+       const startDate = new Date(2023, 0, 1);
+     y cámbiala por tu fecha real de inicio de relación
+     ===================================================== -->
+<section id="contador" aria-labelledby="contador-title">
+  <div class="section-inner">
+    <p class="section-label reveal">El tiempo que hemos compartido</p>
+    <h2 class="section-title reveal" id="contador-title">
+      Llevamos Juntos
+    </h2>
+
+    <div class="contador-grid reveal">
+      <div class="contador-item">
+        <span class="contador-number" id="cnt-dias">000</span>
+        <span class="contador-label">Días</span>
+      </div>
+      <div class="contador-item">
+        <span class="contador-number" id="cnt-horas">00</span>
+        <span class="contador-label">Horas</span>
+      </div>
+      <div class="contador-item">
+        <span class="contador-number" id="cnt-mins">00</span>
+        <span class="contador-label">Minutos</span>
+      </div>
+      <div class="contador-item">
+        <span class="contador-number" id="cnt-segs">00</span>
+        <span class="contador-label">Segundos</span>
+      </div>
+    </div>
+
+    <!-- ===== CAMBIAR TEXTO DEBAJO DEL CONTADOR ===== -->
+    <p class="reveal" style="text-align:center; margin-top:2rem; font-style:italic; color:rgba(245,240,232,0.6);">
+      … y cada segundo que pasa es uno que me alegra haber vivido contigo.
+    </p>
+  </div>
+</section>
+
+
+<!-- =====================================================
+     SECCIÓN 9: RAZONES POR LAS QUE TE AMO
+     ===== EDITAR CADA RAZÓN ===== -->
+<section id="razones" aria-labelledby="razones-title">
+  <div class="section-inner">
+    <p class="section-label reveal">Capítulo V</p>
+    <h2 class="section-title reveal" id="razones-title">
+      Razones por las que <em>Te Amo</em>
+    </h2>
+    <div class="divider reveal">
+      <div class="divider-line"></div>
+      <div class="divider-symbol">❧</div>
+      <div class="divider-line"></div>
+    </div>
+
+    <div class="razones-grid">
+
+      <!-- ===== RAZÓN 1 — EDITAR ===== -->
+      <div class="razon-card reveal">
+        <div class="razon-number">01</div>
+        <h3 class="razon-title">Tu sonrisa</h3>
+        <p class="razon-text">
+          Hay días en que solo con tu sonrisa se me olvida todo lo que estaba mal.
+          Es una de esas cosas que no se pueden fingir, y la tuya es la más genuina
+          que he visto en mi vida. Me derrite cada vez.
+        </p>
+      </div>
+
+      <!-- ===== RAZÓN 2 — EDITAR ===== -->
+      <div class="razon-card reveal">
+        <div class="razon-number">02</div>
+        <h3 class="razon-title">Tu fuerza</h3>
+        <p class="razon-text">
+          Has enfrentado cosas que habrían roto a cualquiera, y aquí sigues,
+          de pie, con esa luz tuya intacta. Verte así me hace querer ser mejor
+          para estar a la altura de alguien tan valiente como tú.
+        </p>
+      </div>
+
+      <!-- ===== RAZÓN 3 — EDITAR ===== -->
+      <div class="razon-card reveal">
+        <div class="razon-number">03</div>
+        <h3 class="razon-title">Tu inteligencia</h3>
+        <p class="razon-text">
+          Cada conversación contigo me hace pensar diferente.
+          Tienes una forma única de ver el mundo que me fascina.
+        </p>
+      </div>
+
+      <!-- ===== RAZÓN 4 — EDITAR ===== -->
+      <div class="razon-card reveal">
+        <div class="razon-number">04</div>
+        <h3 class="razon-title">Tu corazón</h3>
+        <p class="razon-text">
+          La forma en que amas a las personas que quieres es algo que pocas veces
+          se ve. Te entregas sin calcular, sin pedir nada a cambio.
+          Ese corazón tuyo es el más bonito que conozco, y tengo la suerte
+          de que una parte de él sea mía.
+        </p>
+      </div>
+
+      <!-- ===== RAZÓN 5 — EDITAR ===== -->
+      <div class="razon-card reveal">
+        <div class="razon-number">05</div>
+        <h3 class="razon-title">Tu risa</h3>
+        <p class="razon-text">
+          Cuando te ríes de verdad — esa risa que no puedes controlar, que te hace
+          doblarte — paro todo lo que estoy haciendo solo para mirarte.
+          Si pudiera guardar un sonido para toda la vida, sería ese.
+          Podría escucharte reír para siempre y nunca cansarme.
+        </p>
+      </div>
+
+      <!-- ===== RAZÓN 6 — EDITAR ===== -->
+      <div class="razon-card reveal">
+        <div class="razon-number">06</div>
+        <h3 class="razon-title">Tu honestidad</h3>
+        <p class="razon-text">
+          Siempre me dices la verdad, aunque a veces duela.
+          Contigo sé que lo que veo es real, y eso es un regalo enorme.
+        </p>
+      </div>
+
+      <!-- ===== RAZÓN 7 — EDITAR ===== -->
+      <div class="razon-card reveal">
+        <div class="razon-number">07</div>
+        <h3 class="razon-title">Tu paciencia</h3>
+        <p class="razon-text">
+          No siempre soy la persona más fácil, y tú lo sabes mejor que nadie.
+          Pero nunca me has hecho sentir que soy demasiado.
+          Tu paciencia conmigo es uno de los regalos más grandes que me has dado.
+          Por eso, cada día quiero ser alguien que se lo merece.
+        </p>
+      </div>
+
+      <!-- ===== RAZÓN 8 — EDITAR ===== -->
+      <div class="razon-card reveal">
+        <div class="razon-number">08</div>
+        <h3 class="razon-title">Tu pasión</h3>
+        <p class="razon-text">
+          Cuando algo te apasiona, lo vives con todo. Esa energía que pones
+          en las cosas que amas es contagiosa y me impulsa a hacer lo mismo.
+        </p>
+      </div>
+
+      <!-- ===== RAZÓN 9 — EDITAR ===== -->
+      <div class="razon-card reveal">
+        <div class="razon-number">09</div>
+        <h3 class="razon-title">Tu mirada</h3>
+        <p class="razon-text">
+          Hay momentos en que me miras y siento que me lees por completo.
+          Sin palabras, sin explicaciones. Solo tus ojos diciéndome que estás ahí,
+          que me entiendes, que me ves de verdad. No hay nada más íntimo que eso.
+          Podría perderme en tu mirada y no querer salir.
+        </p>
+      </div>
+
+      <!-- ===== RAZÓN 10 — EDITAR ===== -->
+      <div class="razon-card reveal">
+        <div class="razon-number">10</div>
+        <h3 class="razon-title">Simplemente tú</h3>
+        <p class="razon-text">
+          No necesito más razones. Con todo lo que eres — tus virtudes, tus miedos,
+          tus manías, tu forma de querer — ya me alcanza y me sobra.
+          Eres Shirley, y eso es la cosa más especial del mundo.
+          Gracias por existir. Gracias por ser tú. Feliz cumpleaños, mi amor.
+        </p>
+      </div>
+
+      <!-- ===== AGREGA MÁS RAZONES AQUÍ ===== -->
+
+    </div>
+  </div>
+</section>
+
+
+<!-- =====================================================
+     SECCIÓN 10: SORPRESA FINAL
+     ===== CAMBIAR MENSAJE ===== -->
+<section id="sorpresa" aria-labelledby="sorpresa-title">
+  <canvas id="sorpresa-canvas" aria-hidden="true"></canvas>
+  <!-- Fuegos artificiales laterales (se activan al tocar el botón) -->
+  <canvas id="fw-left"  aria-hidden="true"></canvas>
+  <canvas id="fw-right" aria-hidden="true"></canvas>
+
+  <div class="sorpresa-content">
+    <p class="sorpresa-pre reveal">✦ Para Shirley ✦</p>
+
+    <h2 class="sorpresa-title reveal" id="sorpresa-title">
+      Feliz<br/>Cumpleaños<br/><em style="color:var(--rose-light);text-shadow:var(--glow-rose)">Shirley</em>
+    </h2>
+
+    <p class="sorpresa-msg reveal">
+      22 años de que llegaste al mundo para hacerlo un lugar infinitamente más bonito.
+      Desde que estás en mi vida, hasta los días grises tienen algo de luz.
+      Hoy quiero que lo sientas en cada parte de tu cuerpo: eres amada,
+      eres especial, eres irremplazable. Feliz cumpleaños, mi amor.
+      Te amo más de lo que las palabras pueden decir, y lo intento de todas formas.
+    </p>
+
+    <button id="reveal-btn" class="reveal" aria-label="Ver el mensaje especial">
+      Toca aquí, mi amor ♥
+    </button>
+
+    <!-- Mensaje que aparece al tocar -->
+    <div id="love-msg" aria-live="polite">
+      <span class="love-msg-text">¡Espero te haya gustado!</span>
+    </div>
+  </div>
+</section>
+
+
+<!-- =====================================================
+     MENSAJE SECRETO (activar con Ctrl + L en el teclado)
+     Solo lo puede ver quien conoce el truco 🤫
+     ===== CAMBIAR MENSAJE ===== -->
+<div id="secret-msg" role="dialog" aria-modal="true">
+  <!-- ===== CAMBIAR MENSAJE SECRETO ===== -->
+  <p class="secret-text">
+    "Shirley, eres el amor de mi vida.<br/>
+    No hay duda, no hay vuelta atrás.<br/>
+    Solo tú."
+  </p>
+  <p class="secret-sub">
+    Encontraste el mensaje secreto. Solo tú lo sabes. ♥
+  </p>
+  <button id="secret-msg-close" aria-label="Cerrar">×</button>
+</div>
+
+
+<!-- =====================================================
+     FOOTER
+     ===== CAMBIAR TEXTO ===== -->
+<footer>
+  <p>Hecho con todo el amor del mundo para Shirley — Mayo 2026</p>
+  <p class="footer-hearts">♥ ♥ ♥</p>
+  <p style="font-size:0.8rem; margin-top:0.8rem; color:var(--rose-light); font-style:italic; letter-spacing:0.1em;">
+    Con amor, de parte de tu churris 🌹
+  </p>
+  <p style="font-size:0.65rem; margin-top:0.5rem; opacity:0.4;">
+    Esta página siempre estará aquí, para siempre.
+  </p>
+</footer>
+
+
+<!-- JavaScript externo — archivo scripts.js en la misma carpeta -->
+<script src="scripts.js"></script>
+
+</body>
+</html>
